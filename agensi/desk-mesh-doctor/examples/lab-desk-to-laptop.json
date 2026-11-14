@@ -1,0 +1,55 @@
+{
+  "tool": "mesh_link",
+  "version": "1.0.0",
+  "kind": "peer",
+  "from": {
+    "label": "desk",
+    "hostname": "desk",
+    "source_address": "192.168.50.20",
+    "prefix": 24
+  },
+  "target": {
+    "host": "192.168.50.10",
+    "addresses": [
+      "192.168.50.10"
+    ],
+    "resolve_ms": 0.0,
+    "resolve_error": null
+  },
+  "subnet": {
+    "same": true,
+    "local_net": "192.168.50.0/24",
+    "note": ""
+  },
+  "ports": [
+    {
+      "port": 7001,
+      "status": "open",
+      "ms": 1.5,
+      "reason": ""
+    }
+  ],
+  "latency": {
+    "port": 7001,
+    "sent": 20,
+    "answered": 20,
+    "lost": 0,
+    "min": 0.04,
+    "median": 0.08,
+    "max": 0.12,
+    "p95": 0.09,
+    "jitter": 0.02
+  },
+  "feel": {
+    "grade": "good",
+    "text": "should feel instant (rule of thumb: median/p95 under 10/30 ms good, 25/60 ok, 50/120 laggy)"
+  },
+  "findings": [],
+  "summary": {
+    "status": "ok",
+    "open": [
+      7001
+    ],
+    "explicit_ports": true
+  }
+}

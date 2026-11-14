@@ -1,0 +1,33 @@
+# Nothing here is installed: the skill's scripts are single files that run as they are.
+# This file only configures the tests and the linter.
+[project]
+name = "desk-mesh-doctor"
+version = "1.0.0"
+description = "Agent skill that finds why devices on one desk will not connect, and fixes it."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "FinnTech3" }]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5", "pyyaml>=6"]
+
+[project.urls]
+Homepage = "https://github.com/FinnTech3/desk-mesh-doctor"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["agensi/desk-mesh-doctor/scripts", "tools"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["agensi/desk-mesh-doctor/scripts", "tools", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "C4"]
+
+[tool.ruff.lint.per-file-ignores]
+"tools/**" = ["E501"]
+"docs/media-src/**" = ["E501", "SIM115"]
+"tests/**" = ["E501"]

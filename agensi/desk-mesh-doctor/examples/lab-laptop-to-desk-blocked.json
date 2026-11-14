@@ -1,0 +1,46 @@
+{
+  "tool": "mesh_link",
+  "version": "1.0.0",
+  "kind": "peer",
+  "from": {
+    "label": "laptop",
+    "hostname": "laptop",
+    "source_address": "192.168.50.10",
+    "prefix": 24
+  },
+  "target": {
+    "host": "192.168.50.20",
+    "addresses": [
+      "192.168.50.20"
+    ],
+    "resolve_ms": 0.0,
+    "resolve_error": null
+  },
+  "subnet": {
+    "same": true,
+    "local_net": "192.168.50.0/24",
+    "note": ""
+  },
+  "ports": [
+    {
+      "port": 7001,
+      "status": "timeout",
+      "ms": 1002.72,
+      "reason": "no reply in 1 s: a firewall drops it, the address is wrong, or the device is off or asleep"
+    }
+  ],
+  "latency": null,
+  "feel": null,
+  "findings": [
+    {
+      "level": "problem",
+      "code": "filtered",
+      "message": "Every port timed out: packets are dropped or never arrive. Check in order: same Wi-Fi and not a guest network (client isolation), a VPN capturing the route, the other device's firewall profile, and that it is awake."
+    }
+  ],
+  "summary": {
+    "status": "filtered",
+    "open": [],
+    "explicit_ports": true
+  }
+}

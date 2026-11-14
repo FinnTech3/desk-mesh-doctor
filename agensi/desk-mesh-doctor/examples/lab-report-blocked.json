@@ -1,0 +1,47 @@
+{
+  "tool": "mesh_report",
+  "version": "1.0.0",
+  "kind": "report",
+  "ignored_documents": 0,
+  "devices": [
+    {
+      "name": "laptop",
+      "os": "Linux 6.18.44-fc-v470",
+      "profiled": true,
+      "findings": []
+    },
+    {
+      "name": "desk",
+      "os": "Linux 6.18.44-fc-v470",
+      "profiled": true,
+      "findings": []
+    }
+  ],
+  "matrix": {
+    "laptop": {
+      "laptop": "-",
+      "desk": "filtered"
+    },
+    "desk": {
+      "laptop": "ok",
+      "desk": "-"
+    }
+  },
+  "pairs": [
+    {
+      "a": "laptop",
+      "b": "desk",
+      "same_subnet": true,
+      "subnet": "192.168.50.0/24",
+      "a_to_b": "filtered",
+      "b_to_a": "ok",
+      "findings": [
+        {
+          "level": "problem",
+          "message": "laptop->desk is filtered: nothing gets through, so desk's firewall or network profile is dropping inbound connections; desk->laptop works, which points at desk, not the router."
+        }
+      ]
+    }
+  ],
+  "problem": true
+}

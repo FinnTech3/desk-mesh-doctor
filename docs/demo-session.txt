@@ -1,0 +1,51 @@
+# Lab: two network namespaces on a virtual cable stand in for a laptop and a desk PC.
+# The desk drops inbound TCP 7001. Symptom: the laptop cannot reach it, the desk can reach the laptop.
+# On the laptop:
+$ python3 mesh_link.py peer 192.168.50.20 --ports 7001 --label laptop --local-prefix 24
+peer 192.168.50.20  from laptop (192.168.50.10)
+name: 192.168.50.20 in 0.0 ms
+subnet: same 192.168.50.0/24
+  port 7001  timeout               1002.4 ms
+findings:
+  [problem] Every port timed out: packets are dropped or never arrive. Check in order: same Wi-Fi and not a guest network (client isolation), a VPN capturing the route, the other device's firewall profile, and that it is awake.
+# On the desk:
+$ python3 mesh_link.py peer 192.168.50.10 --ports 7001 --label desk --local-prefix 24
+peer 192.168.50.10  from desk (192.168.50.20)
+name: 192.168.50.10 in 0.0 ms
+subnet: same 192.168.50.0/24
+  port 7001  open                     1.3 ms
+latency on port 7001: 20/20 answered, min 0.04 median 0.09 p95 0.15 max 0.17 jitter 0.02 ms
+feel: good, should feel instant (rule of thumb: median/p95 under 10/30 ms good, 25/60 ok, 50/120 laggy)
+findings: none
+# Combine the JSON from both devices (the runs above, saved with --json):
+$ cat laptop-local.json desk-local.json laptop-to-desk.json desk-to-laptop.json | python3 mesh_report.py
+| from \ to | laptop | desk |
+|---|---|---|
+| laptop | - | filtered |
+| desk | ok | - |
+
+laptop <-> desk: same subnet (192.168.50.0/24)
+  [problem] laptop->desk is filtered: nothing gets through, so desk's firewall or network profile is dropping inbound connections; desk->laptop works, which points at desk, not the router.
+# Fix: one inbound rule on the desk, for the home subnet only. The firewall stays on.
+$ iptables -I INPUT 1 -p tcp --dport 7001 -s 192.168.50.0/24 -j ACCEPT
+$ iptables -S INPUT
+-P INPUT ACCEPT
+-A INPUT -s 192.168.50.0/24 -p tcp -m tcp --dport 7001 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 7001 -j DROP
+# Same test again, from the laptop:
+$ python3 mesh_link.py peer 192.168.50.20 --ports 7001 --label laptop --local-prefix 24
+peer 192.168.50.20  from laptop (192.168.50.10)
+name: 192.168.50.20 in 0.0 ms
+subnet: same 192.168.50.0/24
+  port 7001  open                     1.3 ms
+latency on port 7001: 20/20 answered, min 0.08 median 0.1 p95 0.16 max 0.29 jitter 0.03 ms
+feel: good, should feel instant (rule of thumb: median/p95 under 10/30 ms good, 25/60 ok, 50/120 laggy)
+findings: none
+$ cat laptop-local.json desk-local.json laptop-to-desk.json desk-to-laptop.json | python3 mesh_report.py
+| from \ to | laptop | desk |
+|---|---|---|
+| laptop | - | ok |
+| desk | ok | - |
+
+laptop <-> desk: same subnet (192.168.50.0/24)
+  [ok] both directions work

@@ -1,0 +1,95 @@
+{
+  "tool": "mesh_local",
+  "version": "1.0.0",
+  "kind": "local",
+  "label": "desk",
+  "hostname": "desk",
+  "os": "Linux 6.18.44-fc-v470",
+  "python": "3.13.18",
+  "ipv6_supported": true,
+  "interfaces": [
+    {
+      "name": "lo",
+      "up": true,
+      "kind": "loopback",
+      "addresses": [
+        {
+          "family": "IPv4",
+          "address": "127.0.0.1",
+          "prefix": 8,
+          "subnet": "127.0.0.0/8",
+          "scope": "loopback"
+        }
+      ]
+    },
+    {
+      "name": "vdesk",
+      "up": true,
+      "kind": "physical",
+      "addresses": [
+        {
+          "family": "IPv4",
+          "address": "192.168.50.20",
+          "prefix": 24,
+          "subnet": "192.168.50.0/24",
+          "scope": "private"
+        }
+      ]
+    }
+  ],
+  "interfaces_error": null,
+  "default_route": {
+    "source_address": "192.168.50.20",
+    "interface": "vdesk",
+    "prefix": 24,
+    "family": "IPv4"
+  },
+  "windows_profiles": [],
+  "name_resolution": {
+    "hostname_addresses": [],
+    "mdns_name": "desk.local",
+    "mdns_ok": false,
+    "mdns_addresses": [],
+    "mdns_ms": 2000.5,
+    "mdns_error": "no answer from the resolver within 2 s"
+  },
+  "ports": [
+    {
+      "port": 80,
+      "service": "HTTP",
+      "state": "free"
+    },
+    {
+      "port": 443,
+      "service": "HTTPS",
+      "state": "free"
+    },
+    {
+      "port": 445,
+      "service": "SMB",
+      "state": "free"
+    },
+    {
+      "port": 3389,
+      "service": "RDP",
+      "state": "free"
+    },
+    {
+      "port": 5900,
+      "service": "VNC",
+      "state": "free"
+    },
+    {
+      "port": 8080,
+      "service": "HTTP alternate",
+      "state": "free"
+    }
+  ],
+  "findings": [
+    {
+      "level": "info",
+      "code": "mdns_unresolved",
+      "message": "desk.local does not resolve here. Matters only if your tool finds devices by .local name: test by IP address as well."
+    }
+  ]
+}

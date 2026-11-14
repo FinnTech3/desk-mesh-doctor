@@ -1,0 +1,122 @@
+{
+  "title": "desk-mesh-doctor: one direction silent, found in three commands",
+  "cwd": "/tmp/dmd-demo-blocked",
+  "env": {
+    "S": "${ROOT}/agensi/desk-mesh-doctor/scripts",
+    "BASH_ENV": "${ROOT}/docs/media-src/lab.sh"
+  },
+  "width": 900,
+  "fontSize": 13,
+  "wrap": 110,
+  "burst": 2,
+  "typeSeconds": 0.9,
+  "endHold": 2.0,
+  "highlight": [
+    {
+      "re": "\\[problem\\]",
+      "cls": "red"
+    },
+    {
+      "re": "\\[warn\\]",
+      "cls": "yellow"
+    },
+    {
+      "re": "\\[ok\\]",
+      "cls": "green"
+    },
+    {
+      "re": "port 7001  timeout",
+      "cls": "red"
+    },
+    {
+      "re": "port 7001  open",
+      "cls": "green"
+    },
+    {
+      "re": "^\\| laptop \\| - \\| filtered",
+      "cls": "red"
+    },
+    {
+      "re": "^\\| desk \\| ok",
+      "cls": "green"
+    },
+    {
+      "re": "^\\| laptop \\| - \\| ok",
+      "cls": "green"
+    },
+    {
+      "re": "^  (guest network|it is awake)",
+      "cls": "red"
+    },
+    {
+      "re": "^  inbound connections;",
+      "cls": "red"
+    }
+  ],
+  "steps": [
+    {
+      "quiet": true,
+      "cmd": "nsrun laptop python3 \"$S/mesh_local.py\" --json --label laptop > laptop-local.json",
+      "expectExit": [
+        0,
+        1
+      ]
+    },
+    {
+      "quiet": true,
+      "cmd": "nsrun desk python3 \"$S/mesh_local.py\" --json --label desk > desk-local.json",
+      "expectExit": [
+        0,
+        1
+      ]
+    },
+    {
+      "note": "# Lab: two network namespaces on a virtual cable stand in for a laptop and a desk PC."
+    },
+    {
+      "note": "# The desk drops inbound TCP 7001. Symptom: the laptop cannot reach it, the desk can reach the laptop."
+    },
+    {
+      "note": "# On the laptop:"
+    },
+    {
+      "cmd": "nsrun laptop python3 \"$S/mesh_link.py\" peer 192.168.50.20 --ports 7001 --label laptop --local-prefix 24",
+      "show": "python3 mesh_link.py peer 192.168.50.20 --ports 7001 --label laptop --local-prefix 24",
+      "expectExit": [
+        1
+      ],
+      "hold": 0.8
+    },
+    {
+      "note": "# On the desk:"
+    },
+    {
+      "cmd": "nsrun desk python3 \"$S/mesh_link.py\" peer 192.168.50.10 --ports 7001 --label desk --local-prefix 24",
+      "show": "python3 mesh_link.py peer 192.168.50.10 --ports 7001 --label desk --local-prefix 24",
+      "hold": 0.8
+    },
+    {
+      "quiet": true,
+      "cmd": "nsrun laptop python3 \"$S/mesh_link.py\" peer 192.168.50.20 --ports 7001 --label laptop --local-prefix 24 --json > laptop-to-desk.json",
+      "expectExit": [
+        1
+      ]
+    },
+    {
+      "quiet": true,
+      "cmd": "nsrun desk python3 \"$S/mesh_link.py\" peer 192.168.50.10 --ports 7001 --label desk --local-prefix 24 --json > desk-to-laptop.json"
+    },
+    {
+      "note": "# Combine the JSON from both devices (the runs above, saved with --json):"
+    },
+    {
+      "cmd": "cat laptop-local.json desk-local.json laptop-to-desk.json desk-to-laptop.json | python3 \"$S/mesh_report.py\"",
+      "show": "cat laptop-local.json desk-local.json laptop-to-desk.json desk-to-laptop.json | python3 mesh_report.py",
+      "expectExit": [
+        1
+      ],
+      "hold": 1.2
+    }
+  ],
+  "rows": 32
+}
